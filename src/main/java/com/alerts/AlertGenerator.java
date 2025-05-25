@@ -1,7 +1,9 @@
 package com.alerts;
 
+import com.alerts.Alert;
 import com.data_management.DataStorage;
 import com.data_management.Patient;
+import com.data_management.PatientRecord;
 
 /**
  * The {@code AlertGenerator}  class monitors patient data and generates alerts
@@ -36,7 +38,38 @@ public class AlertGenerator {
      * @param patient the patient data to evaluate for alert conditions
      */
     public void evaluateData(Patient patient) {
-        // Implementation goes here
+        // Example 1: Critical blood pressure thresholds
+        for (PatientRecord rec : patient.getAllRecords()) {
+            String type = rec.getRecordType();
+            double value = rec.getMeasurementValue();
+            long ts = rec.getTimestamp();
+
+            if ("SystolicPressure".equals(type) && (value > 180 || value < 90)) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),             // convert int → String
+                        "Critical systolic pressure: " + value,
+                        ts));
+            }
+
+            // Example 2: Low oxygen saturation
+            if ("Saturation".equals(type) && value < 92.0) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),             // convert int → String
+                        "Low blood oxygen saturation: " + value + "%",
+                        ts));
+            }
+
+            // Example 3: Hypotensive hypoxemia (combined condition)
+            if ("SystolicPressure".equals(type) && value < 90) {
+                patient.getRecords(ts - 60_000, ts).stream()
+                        .filter(r -> "Saturation".equals(r.getRecordType()) && r.getMeasurementValue() < 92.0)
+                        .findFirst()
+                        .ifPresent(r2 -> triggerAlert(new Alert(
+                                String.valueOf(patient.getPatientId()),         // convert int → String
+                                "Hypotensive hypoxemia (BP=" + value + ", Sat=" + r2.getMeasurementValue() + "%)",
+                                ts)));
+            }
+        }
     }
 
     /**
@@ -49,5 +82,6 @@ public class AlertGenerator {
      */
     private void triggerAlert(Alert alert) {
         // Implementation might involve logging the alert or notifying staff
+        System.out.println("ALERT: " + alert);
     }
 }

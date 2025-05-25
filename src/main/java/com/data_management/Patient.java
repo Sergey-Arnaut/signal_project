@@ -1,64 +1,66 @@
 package com.data_management;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Represents a patient and manages their medical records.
- * This class stores patient-specific data, allowing for the addition and
- * retrieval
- * of medical records based on specified criteria.
+ * Represents a single patient and holds all of their recorded vitals.
  */
 public class Patient {
-    private int patientId;
-    private List<PatientRecord> patientRecords;
+    private final int patientId;
+    private final List<PatientRecord> records = new ArrayList<>();
 
     /**
-     * Constructs a new Patient with a specified ID.
-     * Initializes an empty list of patient records.
+     * Constructs a new Patient with the given ID.
      *
-     * @param patientId the unique identifier for the patient
+     * @param patientId the unique identifier of this patient
      */
     public Patient(int patientId) {
         this.patientId = patientId;
-        this.patientRecords = new ArrayList<>();
     }
 
     /**
-     * Adds a new record to this patient's list of medical records.
-     * The record is created with the specified measurement value, record type, and
-     * timestamp.
+     * Adds a new measurement record for this patient.
      *
-     * @param measurementValue the measurement value to store in the record
-     * @param recordType       the type of record, e.g., "HeartRate",
-     *                         "BloodPressure"
-     * @param timestamp        the time at which the measurement was taken, in
-     *                         milliseconds since UNIX epoch
+     * @param measurementValue the numeric value of the measurement
+     * @param recordType       the type or label of the measurement
+     * @param timestamp        the time at which the measurement was taken (ms since epoch)
      */
     public void addRecord(double measurementValue, String recordType, long timestamp) {
-        PatientRecord record = new PatientRecord(this.patientId, measurementValue, recordType, timestamp);
-        this.patientRecords.add(record);
+        // PatientRecord’s constructor is (patientId, measurementValue, recordType, timestamp)
+        records.add(new PatientRecord(patientId, measurementValue, recordType, timestamp));
     }
 
     /**
-     * Retrieves a list of PatientRecord objects for this patient that fall within a
-     * specified time range.
-     * The method filters records based on the start and end times provided.
+     * Returns an unmodifiable view of all records for this patient.
      *
-     * @param startTime the start of the time range, in milliseconds since UNIX
-     *                  epoch
-     * @param endTime   the end of the time range, in milliseconds since UNIX epoch
-     * @return a list of PatientRecord objects that fall within the specified time
-     *         range
+     * @return all measurement records in insertion order
+     */
+    public List<PatientRecord> getAllRecords() {
+        return Collections.unmodifiableList(records);
+    }
+
+    /**
+     * Returns all records for this patient whose timestamps are
+     * in the inclusive range [startTime, endTime].
+     *
+     * @param startTime inclusive lower bound of timestamp
+     * @param endTime   inclusive upper bound of timestamp
+     * @return list of PatientRecord objects in the given time window, in insertion order
      */
     public List<PatientRecord> getRecords(long startTime, long endTime) {
-        List<PatientRecord> recordsInRange = new ArrayList<>();
-        for (PatientRecord record : this.patientRecords) {
-            long ts = record.getTimestamp();
-            if (ts >= startTime && ts <= endTime) {
-                recordsInRange.add(record);
-            }
-        }
-        return recordsInRange;
+        return records.stream()
+                .filter(r -> r.getTimestamp() >= startTime && r.getTimestamp() <= endTime)
+                .collect(Collectors.toList());
     }
+
+    /**
+     * @return the unique patient ID
+     */
+    public int getPatientId() {
+        return patientId;
+    }
+
 }
