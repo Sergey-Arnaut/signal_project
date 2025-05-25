@@ -1,4 +1,3 @@
-// src/test/java/com/alerts/AlertGeneratorTest.java
 package com.alerts;
 
 import com.data_management.DataStorage;
