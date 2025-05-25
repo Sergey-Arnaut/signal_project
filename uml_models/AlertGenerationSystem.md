@@ -1,10 +1,3 @@
-# Alert Generation System
-
-![Alert Generation UML](AlertGenerationSystem.png)
-
-
-
-
 Overview
 The Alert Generation subsystem continuously evaluates each patient’s vital measurements against personalized thresholds and, upon violation, creates and routes an Alert to on-call staff.
 
