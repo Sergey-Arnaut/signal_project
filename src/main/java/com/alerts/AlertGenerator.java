@@ -4,10 +4,12 @@ import com.data_management.DataStorage;
 import com.data_management.Patient;
 
 /**
- * The {@code AlertGenerator} class is responsible for monitoring patient data
- * and generating alerts when certain predefined conditions are met. This class
- * relies on a {@link DataStorage} instance to access patient data and evaluate
- * it against specific health criteria.
+ * The {@code AlertGenerator}  class monitors patient data and generates alerts
+ * when predifeind conditiona are met
+ *
+ * <p>It relies on a {@link DataStorage} instance to access and evaluate data.
+ *
+ * the problem wsa that line comments for java doc were  big and we wrapped them
  */
 public class AlertGenerator {
     private DataStorage dataStorage;
@@ -17,20 +19,19 @@ public class AlertGenerator {
      * The {@code DataStorage} is used to retrieve patient data that this class
      * will monitor and evaluate.
      *
-     * @param dataStorage the data storage system that provides access to patient
-     *                    data
+     * @param dataStorage the storage system that provides access to patient data
+     *
+     *  we changed the line structure so the line is not seaprated
+     *
      */
     public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage;
     }
 
     /**
-     * Evaluates the specified patient's data to determine if any alert conditions
-     * are met. If a condition is met, an alert is triggered via the
-     * {@link #triggerAlert}
-     * method. This method should define the specific conditions under which an
-     * alert
-     * will be triggered.
+     * If a condition is met, calls {@link #triggerAlert(Alert)}.
+     *
+     * we simplified all text so it is short annd clear now
      *
      * @param patient the patient data to evaluate for alert conditions
      */
